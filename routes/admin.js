@@ -35,6 +35,22 @@ router.get('/categorias/edit/:id', (req,res) => {
     
 });
 
+router.get('/postagens', (req, res) => {
+    res.render('admin/postagens');
+});
+
+router.get('/postagens/add', (req, res) => {
+    Categoria.find().lean().then((categorias) => {
+        res.render('admin/addPostagens', {categorias: categorias});
+    }).catch(error => {
+        req.flash('error_msg', "Houve um error ao carregar o formulario");
+        res.redirect('/admin/postagens');
+    });
+});
+
+
+//
+
 router.post('/categorias/nova', (req, res) => {
 
     var erros = [];
@@ -92,7 +108,18 @@ router.post('/categorias/edit', (req,res) => {
         req.flash('error_msg', "Houve um error ao editar a categoria");
         res.redirect('/admin/categorias');
     })
+});
+
+router.post('/categorias/deletar', (req,res) => {
+    Categoria.deleteOne({_id: req.body.id}).then(() => {
+    req.flash('success_msg', "Categoria deletada com sucesso!");
+    res.redirect('/admin/categorias');
+}).catch((error) => {
+    req.flash('error_msg', "Houve um erro ao deletar a categoria.");
+    res.redirect('/admin/categorias');
 })
+
+});
 
 
 

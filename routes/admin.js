@@ -42,6 +42,7 @@ router.get('/postagens', (req, res) => {
         res.render("admin/postagens", { postagens: postagens })
     }).catch((error) => {
         req.flash('error_msg', 'houve um erro ao listar as postagens.');
+        res.redirect('/admin');
     });
     
 });
@@ -73,7 +74,7 @@ router.get('/postagem/edit/:id', (req, res) => {
 });
 
 router.get('/postagem/delete/:id', (req, res) => {
-    Postagem.remove({_id: req.params.id}).then(() => {
+    Postagem.deleteOne({_id: req.params.id}).then(() => {
         req.flash('success_msg', 'Postagem deletada com sucesso!');
         res.redirect('/admin/postagens');
     }).catch(error => {

@@ -7,13 +7,17 @@
         <div class="card-body">
             <h4>{{titulo}}</h4>
             <p>{{descricao}}</p>
-            <small>{{categoria.nome}}</small><br>
+            categoria: <small>{{categoria.nome}}</small><br>
             <small>{{data}}</small><br>
             <a href="/admin/postagem/edit/{{_id}}"><button class="btn btn-success mt-3">Editar postagem</button></a>
             <a href="/admin/postagem/delete/{{_id}}"><button class="btn btn-danger mt-3">Deletar postagem</button></a
         </div>
     </div>
 {{else}}
-    <p>Nenhuma postagem registrada!</p>
-
+    <div class="card mt-4">
+        <div class="card-body">
+            <p>Nenhuma postagem registrada!</p>
+        </div>
+    </div>
+    
 {{/each}}

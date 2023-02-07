@@ -21,14 +21,16 @@ router.post('/registro', (req, res) => {
         erros.push({texto: "Email invalido!"});
     }
     if (!req.body.senha || typeof req.body.senha == undefined || req.body.senha == null) {
-        erros.push({texto: "Senha invalido!"});
+        erros.push({texto: "Senha invalida!"});
+    }else{
+        if (req.body.senha.length < 4) {
+            erros.push({texto: "Senha muito curta!"});
+        }
+        else if (req.body.senha != req.body.senha2) {
+            erros.push({texto: "As senhas são diferentes! Tente novamente."});
+        }
     }
-    if (!req.body.senha.length < 4) {
-        erros.push({texto: "Senha muito curta!"});
-    }
-    if (!req.body.senha != req.body.senha2) {
-        erros.push({texto: "As senhas são diferentes! Tente novamente."});
-    }
+   
     if (erros.length > 0) {
         res.render('usuarios/registro', {erros: erros});
     }else{
@@ -38,6 +40,31 @@ router.post('/registro', (req, res) => {
                 req.flash('error_msg', 'Email já cadastrado.');
                 res.redirect('/usuarios/registro');
             }else{
+
+                const novoUsuario = new Usuario({
+                    nome: req.body.nome,
+                    email: req.body.email,
+                    senha: req.body.senha
+                })
+
+                bcrypt.genSalt(10, (erro, salt) => {
+                    bcrypt.hash(novoUsuario.senha, salt, (erro, hash) => {
+                        if (erro) {
+                            req.flash('error_msg', 'Houve um erro durante o salvamento do usuario.');
+                            res.redirect('/');
+                        }else{
+                            novoUsuario.senha = hash;
+                            novoUsuario.save().then(() => {
+                                req.flash('success_msg', 'Usuario criado com sucesso!');
+                                res.redirect('/');
+                            }).catch(error => {
+                                req.flash('error_msg', "Houve um erro ao salvar o usuario.");
+                                res.redirect('/');
+                            })
+                        }
+                    })
+                })
+
 
             }
         }).catch(err => {

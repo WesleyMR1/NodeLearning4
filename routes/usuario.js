@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 require('../models/Usuario');
 const Usuario = mongoose.model('usuarios');
+const bcrypt = require('bcryptjs');
 
 router.get('/registro', (req, res) => {
     res.render('usuarios/registro');
@@ -31,6 +32,19 @@ router.post('/registro', (req, res) => {
     if (erros.length > 0) {
         res.render('usuarios/registro', {erros: erros});
     }else{
+
+        Usuario.findOne({email: req.body.email}).then((usuario) => {
+            if (usuario) {
+                req.flash('error_msg', 'Email já cadastrado.');
+                res.redirect('/usuarios/registro');
+            }else{
+
+            }
+        }).catch(err => {
+            req.flash('error_msg', 'Houve um erro interno');
+            res.redirect('/');
+        })
+
 
     }
 
